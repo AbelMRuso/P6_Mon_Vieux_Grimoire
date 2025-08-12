@@ -1,16 +1,13 @@
-const express = require("express");
-const app = express();
+const http = require("http");
+const app = require("./app");
 
-// middleware to read JSON in request
-app.use(express.json());
+// Crear servidor HTTP usando la app de Express
+const server = http.createServer(app);
 
-// Ruta de prueba
-app.get("/", (req, res) => {
-    res.send("Servidor Express funcionando 🚀");
-});
-
-// Puerto y arranque
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
     console.log(`Servidor escuchando en puerto ${PORT}`);
 });
+
+module.exports = app;
