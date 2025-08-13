@@ -3,6 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const Book = require("./models/Book");
+
 //Conexión con la base de datos
 const mongoose = require("mongoose");
 
@@ -44,73 +46,23 @@ app.post("/api/books/:id/rating", (req, res, next) => {
 });
 
 //MIDDLEWARE GET
+app.get("/api/books/bestrating", (req, res) => {
+    Book.find()
+        .sort({ averageRating: -1 })
+        .then((books) => res.status(200).json(books))
+        .catch((error) => res.status(400).json({ error }));
+});
+
+app.get("/api/books/:id", (req, res) => {
+    Book.findOne({ _id: req.params.id })
+        .then((book) => res.status(200).json(book))
+        .catch((error) => res.status(400).json({ error }));
+});
 
 app.get("/api/books", (req, res) => {
-    const Book = [
-        {
-            id: "1",
-            userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-            title: "Milwaukee Mission",
-            author: "Elder Cooper",
-            imageUrl: "https://via.placeholder.com/206x260",
-            year: 2021,
-            genre: "Policier",
-            ratings: [
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-                {
-                    userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-                    grade: 5,
-                },
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-            ],
-            averageRating: 3,
-        },
-        {
-            id: "2",
-            userId: "clbxs3tag6jkr0biul4trzbrv",
-            title: "Book for Esther",
-            author: "Alabaster",
-            imageUrl: "https://via.placeholder.com/206x260",
-            year: 2022,
-            genre: "Paysage",
-            ratings: [
-                {
-                    userId: "clbxs3tag6jkr0biul4trzbrv",
-                    grade: 4,
-                },
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-                {
-                    userId: "1",
-                    grade: 5,
-                },
-            ],
-            averageRating: 4.2,
-        },
-    ];
-    res.status(200).json(Book);
-});
-app.get("/api/books/bestrating", (req, res) => {
-    res.json("Mostrar los libros mejor valorados");
-});
-app.get("/api/books/:id", (req, res) => {
-    res.json("Recuperar un libro en concreto de la BD");
+    Book.find()
+        .then((books) => res.status(200).json(books))
+        .catch((error) => res.status(400).json({ error }));
 });
 
 //MIDDLEWARE PUT
