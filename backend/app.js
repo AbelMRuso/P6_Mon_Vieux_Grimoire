@@ -1,18 +1,113 @@
 const express = require("express");
 const app = express();
 
+// CONFIGURACIÓN CORS
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    next();
+});
+
 // Middleware para leer JSON
 app.use(express.json());
 
 // Aquí irán las rutas, middlewares adicionales, etc.
+
+//MIDDLEWARE POST
+app.post("/api/auth/signup", (req, res, next) => {
+    res.json("Creación de usuario");
+});
+app.post("/api/auth/login", (req, res, next) => {
+    res.json("Login de usuario");
+});
+
+app.post("/api/books", (req, res, next) => {
+    res.json("Postear un libro");
+});
+
+app.post("/api/books/:id/rating", (req, res, next) => {
+    res.json("Valorar un libro");
+});
+
+//MIDDLEWARE GET
+
 app.get("/api/books", (req, res) => {
-    res.send("enviará un array de los libtos en la base de datos");
+    const Book = [
+        {
+            id: "1",
+            userId: "clc4wj5lh3gyi0ak4eq4n8syr",
+            title: "Milwaukee Mission",
+            author: "Elder Cooper",
+            imageUrl: "https://via.placeholder.com/206x260",
+            year: 2021,
+            genre: "Policier",
+            ratings: [
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+                {
+                    userId: "clc4wj5lh3gyi0ak4eq4n8syr",
+                    grade: 5,
+                },
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+            ],
+            averageRating: 3,
+        },
+        {
+            id: "2",
+            userId: "clbxs3tag6jkr0biul4trzbrv",
+            title: "Book for Esther",
+            author: "Alabaster",
+            imageUrl: "https://via.placeholder.com/206x260",
+            year: 2022,
+            genre: "Paysage",
+            ratings: [
+                {
+                    userId: "clbxs3tag6jkr0biul4trzbrv",
+                    grade: 4,
+                },
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+                {
+                    userId: "1",
+                    grade: 5,
+                },
+            ],
+            averageRating: 4.2,
+        },
+    ];
+    res.status(200).json(Book);
+});
+app.get("/api/books/bestrating", (req, res) => {
+    res.json("Mostrar los libros mejor valorados");
+});
+app.get("/api/books/:id", (req, res) => {
+    res.json("Recuperar un libro en concreto de la BD");
 });
 
-app.post("/api/books", (req, res) => {
-    res.send("mediante autenticación permitirá subir un libro con string e imagen");
+//MIDDLEWARE PUT
+app.put("/api/books/:id", (req, res) => {
+    res.json("Modificar el libro con un id concreto");
 });
 
-// app.use("/api", require("./routes"));
+//MIDDLEWARE DELETE
+app.delete("/api/books/:id", (req, res) => {
+    res.json("Suprimir un libro");
+});
 
 module.exports = app;
