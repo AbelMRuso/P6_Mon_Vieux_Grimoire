@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-
+const bookRoutes = require("./routes/book.routes");
 const Book = require("./models/Book");
 
 //Conexión con la base de datos
@@ -27,9 +27,7 @@ app.use((req, res, next) => {
 // Middleware para leer JSON y lo mete en body
 app.use(express.json());
 
-// Aquí irán las rutas, middlewares adicionales, etc.
-
-//MIDDLEWARE POST
+//ROUTES POST
 app.post("/api/auth/signup", (req, res, next) => {
     res.json("Creación de usuario");
 });
@@ -37,7 +35,7 @@ app.post("/api/auth/login", (req, res, next) => {
     res.json("Login de usuario");
 });
 
-app.post("/api/books", (req, res, next) => {
+/* app.post("/api/books", (req, res, next) => {
     res.json("Postear un libro");
 });
 
@@ -45,10 +43,11 @@ app.post("/api/books/:id/rating", (req, res, next) => {
     res.json("Valorar un libro");
 });
 
-//MIDDLEWARE GET
+//ROUTES GET
 app.get("/api/books/bestrating", (req, res) => {
     Book.find()
         .sort({ averageRating: -1 })
+        .limit(3)
         .then((books) => res.status(200).json(books))
         .catch((error) => res.status(400).json({ error }));
 });
@@ -59,20 +58,17 @@ app.get("/api/books/:id", (req, res) => {
         .catch((error) => res.status(400).json({ error }));
 });
 
-app.get("/api/books", (req, res) => {
-    Book.find()
-        .then((books) => res.status(200).json(books))
-        .catch((error) => res.status(400).json({ error }));
-});
 
-//MIDDLEWARE PUT
+
+//ROUTE PUT
 app.put("/api/books/:id", (req, res) => {
     res.json("Modificar el libro con un id concreto");
 });
 
-//MIDDLEWARE DELETE
+//ROUTE DELETE
 app.delete("/api/books/:id", (req, res) => {
     res.json("Suprimir un libro");
-});
+}); */
 
+app.use("/api/books", bookRoutes);
 module.exports = app;
