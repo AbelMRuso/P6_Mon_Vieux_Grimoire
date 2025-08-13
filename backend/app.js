@@ -1,5 +1,18 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
+
+//Conexión con la base de datos
+const mongoose = require("mongoose");
+
+mongoose
+    .connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log("✅ Conectado a MongoDB"))
+    .catch((err) => console.error("❌ Error al conectar con MongoDB:", err));
 
 // CONFIGURACIÓN CORS
 app.use((req, res, next) => {
@@ -9,7 +22,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware para leer JSON
+// Middleware para leer JSON y lo mete en body
 app.use(express.json());
 
 // Aquí irán las rutas, middlewares adicionales, etc.
