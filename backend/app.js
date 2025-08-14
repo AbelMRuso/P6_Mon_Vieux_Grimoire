@@ -70,5 +70,5 @@ app.delete("/api/books/:id", (req, res) => {
     res.json("Suprimir un libro");
 }); */
 
-app.use("/api/books", bookRoutes);
+app.use("/api/books", bookRoutes); //asocia todas las rutas que emipezan por /api/books
 module.exports = app;

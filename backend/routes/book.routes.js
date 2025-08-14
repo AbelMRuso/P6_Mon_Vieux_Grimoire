@@ -3,10 +3,12 @@ const bookCtrl = require("../controllers/book.controller");
 
 const router = express.Router();
 
-/* app.get("/api/books", (req, res) => {
-    Book.find()
-        .then((books) => res.status(200).json(books))
-        .catch((error) => res.status(400).json({ error }));
-});
- */
+router.post("/", bookCtrl.uploadBook);
+router.post("/:id/rating", bookCtrl.rateBook);
+router.get("/bestrating", bookCtrl.getBestRated);
+router.get("/:id", bookCtrl.getOneBook);
+router.put("/:id", bookCtrl.modifyBook);
+router.delete("/:id", bookCtrl.deleteBook);
 router.get("/", bookCtrl.getAllBooks);
+
+module.exports = router;
