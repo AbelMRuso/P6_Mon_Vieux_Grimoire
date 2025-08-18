@@ -29,4 +29,5 @@ app.use(express.json());
 
 app.use("/api/books", bookRoutes); //asocia todas las rutas que emipezan por /api/books
 app.use("/api/auth", userRoutes);
+/* app.use("/images", express.static(this.path.join(__dirname, "images")));  */ // SE SUPONE QUE RECUPERA LA IMAGEN Y LA MUESTRA EN PANTALLA
 module.exports = app;

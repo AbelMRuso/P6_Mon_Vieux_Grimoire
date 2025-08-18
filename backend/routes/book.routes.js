@@ -1,10 +1,11 @@
 const express = require("express");
 const bookCtrl = require("../controllers/book.controller");
 const auth = require("../middleware/auth");
+const multer = require("../middleware/multer.config");
 
 const router = express.Router();
 
-router.post("/", auth, bookCtrl.uploadBook);
+router.post("/", auth, multer, bookCtrl.uploadBook);
 router.post("/:id/rating", bookCtrl.rateBook);
 
 router.get("/bestrating", bookCtrl.getBestRated); // más específico
