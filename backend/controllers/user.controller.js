@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 //REVISAR YA QUE POSTMAN MANDA UN ERROR 400 AL INTENTAR REGISTRAR A UN USUARIO
 exports.userSignup = async (req, res, next) => {
@@ -31,7 +32,7 @@ exports.userLogin = async (req, res, next) => {
                         } else {
                             res.status(200).json({
                                 userId: user._id,
-                                token: "TOKEN",
+                                token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" }),
                             });
                         }
                     })
