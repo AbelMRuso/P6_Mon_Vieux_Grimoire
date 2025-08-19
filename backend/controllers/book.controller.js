@@ -1,20 +1,32 @@
 const Book = require("../models/Book");
 const fs = require("fs");
+const sharp = require("sharp");
+const path = require("path");
 
-//  NUEVO CONTROLADOR PARA SUBIR LIBROS TENIENDO EN CUENTA LA IMAGEN
+//  REVISAR PASOS PARA OPTIMIZACIÓN DE IMAGEN Y APLICARLO TAMBIÉN EN LA MODIFICACIÓN
 exports.uploadBook = async (req, res, next) => {
+    const filePath = req.file.path;
+    const outputPath = filePath.replace(path.extname(filePath), ".webp");
+
+    await sharp(filePath).webp({ quality: 20 }).toFile(outputPath);
+
+    fs.unlinkSync(filePath);
+
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
+    console.log(filePath);
+    console.log(outputPath);
+
     const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
     });
 
     book.save()
         .then(() => {
-            res.status(201).json({ message: "Objet enregistré !" });
+            res.status(201).json({ message: "Objet enregistré !", book });
         })
         .catch((error) => {
             res.status(400).json({ error });
