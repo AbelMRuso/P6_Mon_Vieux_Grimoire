@@ -1,4 +1,5 @@
 const Book = require("../models/Book");
+const fs = require("fs");
 
 //  NUEVO CONTROLADOR PARA SUBIR LIBROS TENIENDO EN CUENTA LA IMAGEN
 exports.uploadBook = async (req, res, next) => {
@@ -67,7 +68,20 @@ exports.getAllBooks = async (req, res, next) => {
 };
 
 exports.deleteBook = async (req, res) => {
-    Book.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: "El libro se ha suprimido correctamente" }))
-        .catch((error) => res.status(400).json({ error }));
+    Book.findOne({ _id: req.params.id })
+        .then((book) => {
+            if (book.userId != req.auth.userId) {
+                res.status(401).json({ message: "no autorizado" });
+            } else {
+                const filename = book.imageUrl.split("/images/")[1];
+                fs.unlink(`images/${filename}`, () => {
+                    Book.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: "libro suprimido" }))
+                        .catch((error) => res.status(401).json({ error }));
+                });
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ error });
+        });
 };
