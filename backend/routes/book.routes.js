@@ -12,7 +12,7 @@ router.get("/bestrating", bookCtrl.getBestRated); // más específico
 router.get("/", bookCtrl.getAllBooks); // listado completo
 router.get("/:id", bookCtrl.getOneBook); // detalle por id
 
-router.put("/:id", auth, bookCtrl.modifyBook);
+router.put("/:id", auth, multer, bookCtrl.modifyBook);
 router.delete("/:id", auth, bookCtrl.deleteBook);
 
 module.exports = router;
