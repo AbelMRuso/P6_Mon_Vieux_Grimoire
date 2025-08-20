@@ -8,15 +8,13 @@ exports.uploadBook = async (req, res, next) => {
     const filePath = req.file.path;
     const outputPath = filePath.replace(path.extname(filePath), ".webp");
 
-    await sharp(filePath).webp({ quality: 20 }).toFile(outputPath);
+    await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
 
     fs.unlinkSync(filePath);
 
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
-    console.log(filePath);
-    console.log(outputPath);
 
     const book = new Book({
         ...bookObject,
@@ -52,10 +50,16 @@ exports.getOneBook = async (req, res) => {
 };
 
 exports.modifyBook = async (req, res) => {
+    const filePath = req.file.path;
+    const outputPath = filePath.replace(path.extname(filePath), ".webp");
+
+    await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
+
+    fs.unlinkSync(filePath);
     const bookObject = req.file
         ? {
               ...JSON.parse(req.body.book),
-              imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+              imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
           }
         : { ...req.body };
 
