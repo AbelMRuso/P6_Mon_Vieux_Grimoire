@@ -50,18 +50,20 @@ exports.getOneBook = async (req, res) => {
 };
 
 exports.modifyBook = async (req, res) => {
-    const filePath = req.file.path;
-    const outputPath = filePath.replace(path.extname(filePath), ".webp");
+    let bookObject = { ...req.body };
 
-    await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
+    if (req.file) {
+        const filePath = req.file.path;
+        const outputPath = filePath.replace(path.extname(filePath), ".webp");
 
-    fs.unlinkSync(filePath);
-    const bookObject = req.file
-        ? {
-              ...JSON.parse(req.body.book),
-              imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
-          }
-        : { ...req.body };
+        await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
+        fs.unlinkSync(filePath);
+
+        bookObject = {
+            ...JSON.parse(req.body.book),
+            imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
+        };
+    }
 
     delete bookObject._userId;
     Book.findOne({ _id: req.params.id })
