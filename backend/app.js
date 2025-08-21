@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+//AÑADIR PROTECCIÓN PAR ATAQUES CON EXPRESS RATE LIMIT
+
 const express = require("express");
 const path = require("path");
 const app = express();

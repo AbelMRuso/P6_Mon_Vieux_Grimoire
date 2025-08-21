@@ -32,6 +32,7 @@ exports.uploadBook = async (req, res, next) => {
 };
 
 exports.rateBook = async (req, res, next) => {
+    //Verificar si el userId existe y si ya existe evitar que haga la valoración
     res.json("Valorar un libro");
 };
 
@@ -71,6 +72,12 @@ exports.modifyBook = async (req, res) => {
             if (book.userId != req.auth.userId) {
                 res.status(401).json({ message: "no autorizado" });
             } else {
+                if (req.file) {
+                    const oldFilename = book.imageUrl.split("/images/")[1];
+                    fs.unlink(`images/${oldFilename}`, (error) => {
+                        if (error) res.status(401).json({ error });
+                    });
+                }
                 Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: "libro modificado" }))
                     .catch((error) => res.status(401).json({ error }));

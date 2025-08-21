@@ -5,8 +5,8 @@ const multer = require("../middleware/multer.config");
 
 const router = express.Router();
 
-router.post("/", auth, multer, bookCtrl.uploadBook);
 router.post("/:id/rating", bookCtrl.rateBook);
+router.post("/", auth, multer, bookCtrl.uploadBook);
 
 router.get("/bestrating", bookCtrl.getBestRated); // más específico
 router.get("/", bookCtrl.getAllBooks); // listado completo
