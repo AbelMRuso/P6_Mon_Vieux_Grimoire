@@ -31,9 +31,50 @@ exports.uploadBook = async (req, res, next) => {
         });
 };
 
+//A VERIFICAR!!
 exports.rateBook = async (req, res, next) => {
-    //Verificar si el userId existe y si ya existe evitar que haga la valoración
-    res.json("Valorar un libro");
+    //Aqui empezamos la valoración del libro
+
+    try {
+        const userId = req.auth.userId;
+        const bookId = req.params.id;
+        const { rating } = req.body;
+
+        console.log("Body recibido:", req.body);
+        console.log("Book ID recibido:", bookId);
+        console.log("Grade recibido:", rating);
+
+        // Recuperar el libro
+        const book = await Book.findById(bookId);
+        console.log("Libro encontrado:", book);
+        if (!book) {
+            return res.status(404).json({ message: "Libro no encontrado" });
+        }
+
+        // Comprobar si el usuario ya ha valorado
+        const alreadyRated = book.ratings.some((r) => r.userId.toString() === userId);
+        if (alreadyRated) {
+            return res.status(400).json({ message: "Ya has valorado este libro" });
+        }
+
+        //agrega la valoración del usuario
+        book.ratings.push({ userId, grade: rating });
+
+        //recalcula la nota media
+        const totalRating = book.ratings.reduce((acc, r) => acc + r.grade, 0);
+        book.averageRating = totalRating / book.ratings.length;
+
+        console.log("Ratings actualizados:", book.ratings);
+        console.log("Nueva nota media:", book.averageRating);
+
+        //guardar cambios
+        await book.save();
+
+        res.status(200).json(book);
+    } catch (error) {
+        console.error("Error en rateBook:", error);
+        res.status(500).json({ message: "Error al procesar la valoración", error: error.message });
+    }
 };
 
 exports.getBestRated = async (req, res, next) => {
