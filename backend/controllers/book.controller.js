@@ -62,14 +62,13 @@ exports.rateBook = async (req, res, next) => {
 
         //recalcula la nota media
         const totalRating = book.ratings.reduce((acc, r) => acc + r.grade, 0);
-        book.averageRating = totalRating / book.ratings.length;
+        book.averageRating = Math.round(totalRating / book.ratings.length);
 
         console.log("Ratings actualizados:", book.ratings);
         console.log("Nueva nota media:", book.averageRating);
 
         //guardar cambios
         await book.save();
-
         res.status(200).json(book);
     } catch (error) {
         console.error("Error en rateBook:", error);
