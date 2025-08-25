@@ -1,5 +1,5 @@
 const Book = require("../models/Book");
-const fs = require("fs");
+const fs = require("fs").promises;
 const sharp = require("sharp");
 const path = require("path");
 
@@ -145,20 +145,24 @@ exports.getAllBooks = async (req, res, next) => {
 };
 
 exports.deleteBook = async (req, res) => {
-    Book.findOne({ _id: req.params.id })
-        .then((book) => {
-            if (book.userId != req.auth.userId) {
-                res.status(401).json({ message: "no autorizado" });
-            } else {
-                const filename = book.imageUrl.split("/images/")[1];
-                fs.unlink(`images/${filename}`, () => {
-                    Book.deleteOne({ _id: req.params.id })
-                        .then(() => res.status(200).json({ message: "libro suprimido" }))
-                        .catch((error) => res.status(401).json({ error }));
-                });
-            }
-        })
-        .catch((error) => {
-            res.status(500).json({ error });
-        });
+    try {
+        const book = await Book.findOne({ _id: req.params.id });
+        if (!book) {
+            return res.status(404).json({ message: "Livre non trouvé" });
+        }
+
+        if (book.userId != req.auth.userId) {
+            return res.status(401).json({ message: "Non autorisé" });
+        }
+
+        if (book.imageUrl) {
+            const filename = book.imageUrl.split("/images/")[1];
+            await fs.unlink(`images/${filename}`);
+        }
+
+        await Book.deleteOne({ _id: req.params.id });
+        res.status(200).json({ message: "Livre supprimé avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur du serveur", error });
+    }
 };
