@@ -4,30 +4,28 @@ const sharp = require("sharp");
 const path = require("path");
 
 exports.uploadBook = async (req, res, next) => {
-    const filePath = req.file.path;
-    const outputPath = filePath.replace(path.extname(filePath), ".webp");
+    try {
+        const filePath = req.file.path;
+        const outputPath = filePath.replace(path.extname(filePath), ".webp");
 
-    await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
+        await sharp(filePath).webp({ quality: 80 }).toFile(outputPath);
 
-    fs.unlinkSync(filePath);
+        fs.unlinkSync(filePath);
 
-    const bookObject = JSON.parse(req.body.book);
-    delete bookObject._id;
-    delete bookObject._userId;
+        const bookObject = JSON.parse(req.body.book);
+        delete bookObject._id;
+        delete bookObject._userId;
 
-    const book = new Book({
-        ...bookObject,
-        userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
-    });
-
-    book.save()
-        .then(() => {
-            res.status(201).json({ message: "Objet enregistré !", book });
-        })
-        .catch((error) => {
-            res.status(400).json({ error });
+        const book = new Book({
+            ...bookObject,
+            userId: req.auth.userId,
+            imageUrl: `${req.protocol}://${req.get("host")}/images/${path.basename(outputPath)}`,
         });
+        await book.save();
+        res.status(201).json({ message: "Livre enregistré !", book });
+    } catch (error) {
+        res.status(400).json({ error });
+    }
 };
 
 exports.rateBook = async (req, res, next) => {
