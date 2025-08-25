@@ -85,9 +85,16 @@ exports.getBestRated = async (req, res, next) => {
 };
 
 exports.getOneBook = async (req, res) => {
-    Book.findOne({ _id: req.params.id })
-        .then((book) => res.status(200).json(book))
-        .catch((error) => res.status(400).json({ error }));
+    try {
+        const book = await Book.findOne({ _id: req.params.id });
+
+        if (!book) {
+            return res.status(404).json({ message: "livre introuvable" });
+        }
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).json({ error });
+    }
 };
 
 exports.modifyBook = async (req, res) => {
