@@ -5,20 +5,24 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const app = express();
-const limiter = require("./middleware/limiter");
 const bookRoutes = require("./routes/book.routes");
 const userRoutes = require("./routes/user.routes");
 
 //Conexión con la base de datos
 const mongoose = require("mongoose");
 
-mongoose
-    .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => console.log("✅ Conectado a MongoDB"))
-    .catch((err) => console.error("❌ Error al conectar con MongoDB:", err));
+const connectDB = async () => {
+    try {
+        mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+    } catch (err) {
+        console.error("❌ Error al conectar con MongoDB:", err);
+    }
+};
+
+connectDB();
 
 // CONFIGURACIÓN CORS
 app.use((req, res, next) => {
