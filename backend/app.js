@@ -18,7 +18,7 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
     } catch (err) {
-        console.error("❌ Error al conectar con MongoDB:", err);
+        console.error("❌ Erreur de connexion avec MongoDB:", err);
     }
 };
 
