@@ -136,9 +136,12 @@ exports.modifyBook = async (req, res) => {
 };
 
 exports.getAllBooks = async (req, res, next) => {
-    Book.find()
-        .then((books) => res.status(200).json(books))
-        .catch((error) => res.status(400).json({ error }));
+    try {
+        const books = await Book.find();
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur du serveur" });
+    }
 };
 
 exports.deleteBook = async (req, res) => {
