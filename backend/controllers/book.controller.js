@@ -1,5 +1,5 @@
 const Book = require("../models/Book");
-const fs = require("fs").promises;
+const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
 
@@ -157,7 +157,7 @@ exports.deleteBook = async (req, res) => {
 
         if (book.imageUrl) {
             const filename = book.imageUrl.split("/images/")[1];
-            await fs.unlink(`images/${filename}`);
+            fs.unlinkSync(`images/${filename}`);
         }
 
         await Book.deleteOne({ _id: req.params.id });
