@@ -77,11 +77,13 @@ exports.rateBook = async (req, res, next) => {
 };
 
 exports.getBestRated = async (req, res, next) => {
-    Book.find()
-        .sort({ averageRating: -1 })
-        .limit(3)
-        .then((books) => res.status(200).json(books))
-        .catch((error) => res.status(400).json({ error }));
+    try {
+        const books = await Book.find().sort({ averageRating: -1 }).limit(3);
+
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur du serveur" });
+    }
 };
 
 exports.getOneBook = async (req, res) => {
