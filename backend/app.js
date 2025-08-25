@@ -1,23 +1,11 @@
 require("dotenv").config();
 
 const express = require("express");
+const connectDB = require("./config/db");
 const path = require("path");
 const app = express();
 const bookRoutes = require("./routes/book.routes");
 const userRoutes = require("./routes/user.routes");
-
-const mongoose = require("mongoose");
-
-const connectDB = async () => {
-    try {
-        mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-    } catch (err) {
-        console.error("❌ Erreur de connexion avec MongoDB:", err);
-    }
-};
 
 connectDB();
 
