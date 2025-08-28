@@ -18,5 +18,3 @@ const storage = multer.diskStorage({
 });
 
 module.exports = multer({ storage }).single("image");
-
-//REVISAR BIEN ESTE ARCHIVO PARA VER DONDE FALLA
